@@ -17,8 +17,8 @@ public class TankFrame extends Frame {
     List<Tank> enemies = new ArrayList();
     List<Explode> explodes = new ArrayList();
 
-    public static int WIDTH = 800;
-    public static int HEIGHT = 600;
+    public static int WIDTH = 1080;
+    public static int HEIGHT = 960;
 
     public TankFrame() {
         this.setSize(WIDTH, HEIGHT);
@@ -37,10 +37,6 @@ public class TankFrame extends Frame {
                 System.exit(0);
             }
         });
-
-        for (int i = 0; i < 5; i++) {
-            enemies.add(new Tank(50 + i * 80, 20, Dir.DOWN, Group.BAD, this));
-        }
     }
 
     @Override
@@ -58,13 +54,14 @@ public class TankFrame extends Frame {
         for (int j = 0; j < enemies.size(); j++) {
             enemies.get(j).paint(graphics);
         }
+        for (int k = 0; k < explodes.size(); k++) {
+            explodes.get(k).paint(graphics);
+        }
+
         for (int i = 0; i < bulletList.size(); i++) {
             for (int j = 0; j < enemies.size(); j++) {
                 bulletList.get(i).collideWith(enemies.get(j));
             }
-        }
-        for (int k = 0; k < explodes.size(); k++) {
-            explodes.remove(k).paint(graphics);
         }
     }
 

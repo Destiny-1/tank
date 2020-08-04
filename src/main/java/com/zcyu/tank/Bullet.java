@@ -73,7 +73,9 @@ public class Bullet {
         if (b.intersects(t)) {
             this.die();
             tank.die();
-            Explode.setExplodeList(this.x, this.y, tankFrame);
+            int bX = tank.x + tank.WIDTH / 2 - Explode.WIDTH / 2;
+            int bY = tank.y + tank.HEIGHT / 2 - Explode.HEIGHT / 2;
+            tankFrame.explodes.add(new Explode(bX, bY, tankFrame));
         }
     }
 

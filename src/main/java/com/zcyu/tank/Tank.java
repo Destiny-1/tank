@@ -5,8 +5,8 @@ import java.util.Random;
 
 public class Tank {
     public int x, y;
-    public int WIDTH = ResourceMgr.tankD.getWidth();
-    public int HEIGHT = ResourceMgr.tankD.getHeight();
+    public int WIDTH = ResourceMgr.goodTankD.getWidth();
+    public int HEIGHT = ResourceMgr.goodTankD.getHeight();
     private Dir dir = Dir.UP;
     private int speed = 5;
     private Boolean moving = true;
@@ -36,16 +36,16 @@ public class Tank {
         if (!alive) tankFrame.enemies.remove(this);
         switch (dir) {
             case UP:
-                graphics.drawImage(ResourceMgr.tankU, x, y, null);
+                graphics.drawImage(this.group == Group.GOOD ? ResourceMgr.goodTankU : ResourceMgr.badTankU, x, y, null);
                 break;
             case DOWN:
-                graphics.drawImage(ResourceMgr.tankD, x, y, null);
+                graphics.drawImage(this.group == Group.GOOD ? ResourceMgr.goodTankD : ResourceMgr.badTankD, x, y, null);
                 break;
             case LEFT:
-                graphics.drawImage(ResourceMgr.tankL, x, y, null);
+                graphics.drawImage(this.group == Group.GOOD ? ResourceMgr.goodTankL : ResourceMgr.badTankL, x, y, null);
                 break;
             case RIGHT:
-                graphics.drawImage(ResourceMgr.tankR, x, y, null);
+                graphics.drawImage(this.group == Group.GOOD ? ResourceMgr.goodTankR : ResourceMgr.badTankR, x, y, null);
                 break;
         }
         move();
@@ -61,8 +61,8 @@ public class Tank {
                 }
                 Bullet.WIDTH = ResourceMgr.bulletU.getWidth();
                 Bullet.HEIGHT = ResourceMgr.bulletU.getHeight();
-                WIDTH = ResourceMgr.tankU.getWidth();
-                HEIGHT = ResourceMgr.tankU.getHeight();
+                WIDTH = ResourceMgr.goodTankU.getWidth();
+                HEIGHT = ResourceMgr.goodTankU.getHeight();
                 break;
             case DOWN:
                 y += speed;
@@ -71,8 +71,8 @@ public class Tank {
                 }
                 Bullet.WIDTH = ResourceMgr.bulletD.getWidth();
                 Bullet.HEIGHT = ResourceMgr.bulletD.getHeight();
-                WIDTH = ResourceMgr.tankD.getWidth();
-                HEIGHT = ResourceMgr.tankD.getHeight();
+                WIDTH = ResourceMgr.goodTankD.getWidth();
+                HEIGHT = ResourceMgr.goodTankD.getHeight();
                 break;
             case LEFT:
                 x -= speed;
@@ -81,8 +81,8 @@ public class Tank {
                 }
                 Bullet.WIDTH = ResourceMgr.bulletL.getWidth();
                 Bullet.HEIGHT = ResourceMgr.bulletL.getHeight();
-                WIDTH = ResourceMgr.tankL.getWidth();
-                HEIGHT = ResourceMgr.tankL.getHeight();
+                WIDTH = ResourceMgr.goodTankL.getWidth();
+                HEIGHT = ResourceMgr.goodTankL.getHeight();
                 break;
             case RIGHT:
                 x += speed;
@@ -91,11 +91,19 @@ public class Tank {
                 }
                 Bullet.WIDTH = ResourceMgr.bulletR.getWidth();
                 Bullet.HEIGHT = ResourceMgr.bulletR.getHeight();
-                WIDTH = ResourceMgr.tankR.getWidth();
-                HEIGHT = ResourceMgr.tankR.getHeight();
+                WIDTH = ResourceMgr.goodTankR.getWidth();
+                HEIGHT = ResourceMgr.goodTankR.getHeight();
                 break;
         }
-        if(random.nextInt(10) > 8 ) this.fire();
+        if(random.nextInt(100) > 85 && this.group == Group.BAD ) {
+            this.fire();
+        }
+        if(this.group == Group.BAD && random.nextInt(100) > 95) randomDir();
+
+    }
+
+    private void randomDir() {
+        this.dir = Dir.values()[random.nextInt(4)];
     }
 
     public void fire() {
