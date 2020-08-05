@@ -46,6 +46,7 @@ public class TankFrame extends Frame {
         graphics.setColor(Color.red);
         graphics.drawString("子弹数量:" + bulletList.size(), 20, 60);
         graphics.drawString("敌人数量:" + enemies.size(), 20, 80);
+        graphics.drawString("爆炸数量:" + explodes.size(), 20, 100);
         graphics.setColor(color);
 
         for (int i = 0; i < bulletList.size(); i++) {

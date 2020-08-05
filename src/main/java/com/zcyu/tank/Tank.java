@@ -7,6 +7,7 @@ public class Tank {
     public int x, y;
     public int WIDTH = ResourceMgr.goodTankD.getWidth();
     public int HEIGHT = ResourceMgr.goodTankD.getHeight();
+    public Rectangle rectangle = new Rectangle();
     private Dir dir = Dir.UP;
     private int speed = 5;
     private Boolean moving = true;
@@ -22,6 +23,11 @@ public class Tank {
         this.dir = dir;
         this.tankFrame = tankFrame;
         this.group = group;
+
+        rectangle.x = this.x;
+        rectangle.y = this.y;
+        rectangle.width = WIDTH;
+        rectangle.height = HEIGHT;
     }
 
     public void setMoving(Boolean moving) {
@@ -56,9 +62,6 @@ public class Tank {
         switch (dir) {
             case UP:
                 y -= speed;
-                if(y <= 0){
-                    dir = Dir.DOWN;
-                }
                 Bullet.WIDTH = ResourceMgr.bulletU.getWidth();
                 Bullet.HEIGHT = ResourceMgr.bulletU.getHeight();
                 WIDTH = ResourceMgr.goodTankU.getWidth();
@@ -66,9 +69,6 @@ public class Tank {
                 break;
             case DOWN:
                 y += speed;
-                if(y >= tankFrame.HEIGHT){
-                    dir = Dir.UP;
-                }
                 Bullet.WIDTH = ResourceMgr.bulletD.getWidth();
                 Bullet.HEIGHT = ResourceMgr.bulletD.getHeight();
                 WIDTH = ResourceMgr.goodTankD.getWidth();
@@ -76,9 +76,6 @@ public class Tank {
                 break;
             case LEFT:
                 x -= speed;
-                if(x <= 0){
-                    dir = Dir.RIGHT;
-                }
                 Bullet.WIDTH = ResourceMgr.bulletL.getWidth();
                 Bullet.HEIGHT = ResourceMgr.bulletL.getHeight();
                 WIDTH = ResourceMgr.goodTankL.getWidth();
@@ -86,20 +83,29 @@ public class Tank {
                 break;
             case RIGHT:
                 x += speed;
-                if(x > tankFrame.WIDTH){
-                    dir = Dir.LEFT;
-                }
                 Bullet.WIDTH = ResourceMgr.bulletR.getWidth();
                 Bullet.HEIGHT = ResourceMgr.bulletR.getHeight();
                 WIDTH = ResourceMgr.goodTankR.getWidth();
                 HEIGHT = ResourceMgr.goodTankR.getHeight();
                 break;
         }
-        if(random.nextInt(100) > 85 && this.group == Group.BAD ) {
+
+        if (random.nextInt(100) > 85 && this.group == Group.BAD) {
             this.fire();
         }
-        if(this.group == Group.BAD && random.nextInt(100) > 95) randomDir();
+        if (this.group == Group.BAD && random.nextInt(100) > 95) randomDir();
 
+        boundsCheck();
+
+        rectangle.x = this.x;
+        rectangle.y = this.y;
+    }
+
+    private void boundsCheck() {
+        if (this.x < 0) x = 6;
+        if (this.y < 30) y = 30;
+        if (this.x > tankFrame.WIDTH - this.WIDTH) x = tankFrame.WIDTH - this.WIDTH;
+        if (this.y > tankFrame.HEIGHT - this.HEIGHT) y = tankFrame.HEIGHT - this.HEIGHT;
     }
 
     private void randomDir() {

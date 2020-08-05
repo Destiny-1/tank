@@ -8,6 +8,8 @@ public class Bullet {
     private Dir dir;
     private static int SPEED = 10;
 
+    Rectangle rectangle = new Rectangle();
+
     public Group group = Group.BAD;
 
     private TankFrame tankFrame;
@@ -20,6 +22,11 @@ public class Bullet {
         this.dir = dir;
         this.tankFrame = tankFrame;
         this.group = group;
+
+        rectangle.x = this.x;
+        rectangle.y = this.y;
+        rectangle.width = WIDTH;
+        rectangle.height = HEIGHT;
     }
 
     private void move() {
@@ -37,6 +44,9 @@ public class Bullet {
                 x += SPEED;
                 break;
         }
+        rectangle.x = this.x;
+        rectangle.y = this.y;
+
         if (x < 0 || y < 0 || x > TankFrame.WIDTH || y > TankFrame.HEIGHT) {
             alive = false;
         }
@@ -68,9 +78,7 @@ public class Bullet {
 
     public void collideWith(Tank tank) {
         if (this.group == tank.group) return;
-        Rectangle b = new Rectangle(this.x, this.y, WIDTH, HEIGHT);
-        Rectangle t = new Rectangle(tank.x, tank.y, tank.WIDTH, tank.HEIGHT);
-        if (b.intersects(t)) {
+        if (rectangle.intersects(tank.rectangle)) {
             this.die();
             tank.die();
             int bX = tank.x + tank.WIDTH / 2 - Explode.WIDTH / 2;
