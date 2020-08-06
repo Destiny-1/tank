@@ -14,7 +14,7 @@ public class TankFrame extends Frame {
     Tank tank = new Tank(200, 400, Dir.DOWN, Group.GOOD, this);
 
     List<Bullet> bulletList = new ArrayList();
-    List<Tank> enemies = new ArrayList();
+    List<Tank> tanks = new ArrayList();
     List<Explode> explodes = new ArrayList();
 
     public static int WIDTH = 1080;
@@ -45,23 +45,23 @@ public class TankFrame extends Frame {
         Color color = graphics.getColor();
         graphics.setColor(Color.red);
         graphics.drawString("子弹数量:" + bulletList.size(), 20, 60);
-        graphics.drawString("敌人数量:" + enemies.size(), 20, 80);
+        graphics.drawString("敌人数量:" + tanks.size(), 20, 80);
         graphics.drawString("爆炸数量:" + explodes.size(), 20, 100);
         graphics.setColor(color);
 
         for (int i = 0; i < bulletList.size(); i++) {
             bulletList.get(i).paint(graphics);
         }
-        for (int j = 0; j < enemies.size(); j++) {
-            enemies.get(j).paint(graphics);
+        for (int j = 0; j < tanks.size(); j++) {
+            tanks.get(j).paint(graphics);
         }
         for (int k = 0; k < explodes.size(); k++) {
             explodes.get(k).paint(graphics);
         }
 
         for (int i = 0; i < bulletList.size(); i++) {
-            for (int j = 0; j < enemies.size(); j++) {
-                bulletList.get(i).collideWith(enemies.get(j));
+            for (int j = 0; j < tanks.size(); j++) {
+                bulletList.get(i).collideWith(tanks.get(j));
             }
         }
     }

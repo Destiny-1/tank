@@ -39,7 +39,7 @@ public class Tank {
     }
 
     public void paint(Graphics graphics) {
-        if (!alive) tankFrame.enemies.remove(this);
+        if (!alive) tankFrame.tanks.remove(this);
         switch (dir) {
             case UP:
                 graphics.drawImage(this.group == Group.GOOD ? ResourceMgr.goodTankU : ResourceMgr.badTankU, x, y, null);
