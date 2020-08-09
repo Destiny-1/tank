@@ -1,6 +1,8 @@
 package com.zcyu.tank;
 
 
+import com.zcyu.abstrackFactory.*;
+
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -11,11 +13,14 @@ import java.util.List;
 
 public class TankFrame extends Frame {
 
-    Tank tank = new Tank(200, 400, Dir.DOWN, Group.GOOD, this);
+    GoodTank tank = new GoodTank(200, 400, Dir.DOWN,this);
 
-    List<Bullet> bulletList = new ArrayList();
-    List<Tank> tanks = new ArrayList();
-    List<Explode> explodes = new ArrayList();
+    public GameFactory gameFactory = new UglyFactory();
+
+    List<BulletFactory> bulletList = new ArrayList();
+
+    List<BaseTank> tanks = new ArrayList();
+    List<ExplodeFactory> explodes = new ArrayList();
 
     public static int WIDTH = 1080;
     public static int HEIGHT = 960;
@@ -32,7 +37,6 @@ public class TankFrame extends Frame {
             public void windowOpened(WindowEvent e) {
                 System.out.println("windowOpened");
             }
-
             public void windowClosing(WindowEvent e) {
                 System.exit(0);
             }
@@ -105,8 +109,6 @@ public class TankFrame extends Frame {
                 case KeyEvent.VK_DOWN:
                     down = true;
                     break;
-                case KeyEvent.VK_SPACE:
-                    tank.fire();
             }
             setTankDir();
         }
@@ -146,6 +148,8 @@ public class TankFrame extends Frame {
                 case KeyEvent.VK_DOWN:
                     down = false;
                     break;
+                case KeyEvent.VK_SPACE:
+                    tank.fire();
             }
             setTankDir();
         }

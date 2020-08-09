@@ -1,23 +1,30 @@
 package com.zcyu.tank;
 
+import com.zcyu.Strategy.DefaultFireStrategy;
+import com.zcyu.Strategy.FireStrategy;
+import com.zcyu.Strategy.FourDirsFireStrategy;
+import com.zcyu.abstrackFactory.TankFactory;
+
 import java.awt.*;
 import java.util.Random;
 
-public class Tank {
+public class BaseTank extends TankFactory {
     public int x, y;
     public int WIDTH = ResourceMgr.goodTankD.getWidth();
     public int HEIGHT = ResourceMgr.goodTankD.getHeight();
     public Rectangle rectangle = new Rectangle();
-    private Dir dir = Dir.UP;
+    public Dir dir;
     private int speed = 5;
     private Boolean moving = true;
     public Group group = Group.BAD;
     private Random random = new Random();
-    private Boolean alive = true;
+    public Boolean alive = true;
 
-    private TankFrame tankFrame = null;
+    public TankFrame tankFrame;
 
-    public Tank(int x, int y, Dir dir, Group group, TankFrame tankFrame) {
+    FireStrategy fireStrategy = DefaultFireStrategy.getDefaultFireStrategy();
+
+    public BaseTank(int x, int y, Dir dir, Group group, TankFrame tankFrame) {
         this.x = x;
         this.y = y;
         this.dir = dir;
@@ -28,6 +35,11 @@ public class Tank {
         rectangle.y = this.y;
         rectangle.width = WIDTH;
         rectangle.height = HEIGHT;
+
+        if(group == Group.GOOD){
+            fireStrategy = FourDirsFireStrategy.getFourDirsFireStrategy();
+        }
+
     }
 
     public void setMoving(Boolean moving) {
@@ -57,34 +69,34 @@ public class Tank {
         move();
     }
 
-    private void move() {
+    public void move() {
         if (!moving) return;
         switch (dir) {
             case UP:
                 y -= speed;
-                Bullet.WIDTH = ResourceMgr.bulletU.getWidth();
-                Bullet.HEIGHT = ResourceMgr.bulletU.getHeight();
+                DefaultBullet.WIDTH = ResourceMgr.bulletU.getWidth();
+                DefaultBullet.HEIGHT = ResourceMgr.bulletU.getHeight();
                 WIDTH = ResourceMgr.goodTankU.getWidth();
                 HEIGHT = ResourceMgr.goodTankU.getHeight();
                 break;
             case DOWN:
                 y += speed;
-                Bullet.WIDTH = ResourceMgr.bulletD.getWidth();
-                Bullet.HEIGHT = ResourceMgr.bulletD.getHeight();
+                DefaultBullet.WIDTH = ResourceMgr.bulletD.getWidth();
+                DefaultBullet.HEIGHT = ResourceMgr.bulletD.getHeight();
                 WIDTH = ResourceMgr.goodTankD.getWidth();
                 HEIGHT = ResourceMgr.goodTankD.getHeight();
                 break;
             case LEFT:
                 x -= speed;
-                Bullet.WIDTH = ResourceMgr.bulletL.getWidth();
-                Bullet.HEIGHT = ResourceMgr.bulletL.getHeight();
+                DefaultBullet.WIDTH = ResourceMgr.bulletL.getWidth();
+                DefaultBullet.HEIGHT = ResourceMgr.bulletL.getHeight();
                 WIDTH = ResourceMgr.goodTankL.getWidth();
                 HEIGHT = ResourceMgr.goodTankL.getHeight();
                 break;
             case RIGHT:
                 x += speed;
-                Bullet.WIDTH = ResourceMgr.bulletR.getWidth();
-                Bullet.HEIGHT = ResourceMgr.bulletR.getHeight();
+                DefaultBullet.WIDTH = ResourceMgr.bulletR.getWidth();
+                DefaultBullet.HEIGHT = ResourceMgr.bulletR.getHeight();
                 WIDTH = ResourceMgr.goodTankR.getWidth();
                 HEIGHT = ResourceMgr.goodTankR.getHeight();
                 break;
@@ -113,10 +125,7 @@ public class Tank {
     }
 
     public void fire() {
-        int bX = this.x + this.WIDTH / 2 - Bullet.WIDTH / 2;
-        int bY = this.y + this.HEIGHT / 2 - Bullet.HEIGHT / 2;
-        Bullet bullet = new Bullet(bX, bY, this.dir, this.group, this.tankFrame);
-        tankFrame.bulletList.add(bullet);
+        fireStrategy.fire(this);
     }
 
     public void die() {

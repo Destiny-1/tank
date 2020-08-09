@@ -1,12 +1,21 @@
 package com.zcyu.tank;
 
+import com.zcyu.abstrackFactory.GameFactory;
+import com.zcyu.abstrackFactory.UglyFactory;
+
 public class TankStart {
-    public static void main(String[] args) throws Exception{
+
+    public static void main(String[] args) throws Exception {
+
         TankFrame frame = new TankFrame();
-        for (int i = 0; i < 5; i++) {
-            frame.tanks.add(new Tank(50 + i * 80, 20, Dir.DOWN, Group.BAD, frame));
+        int tankAmount = Integer.valueOf(PropertiesMgr.INSTANCE.getConfigValue("tank.amount"));
+
+        GameFactory factory = new UglyFactory();
+
+        for (int i = 0; i < tankAmount; i++) {
+            frame.tanks.add(factory.createTank(50 + i * 80, 20, Dir.DOWN, frame));
         }
-        while (true){
+        while (true) {
             Thread.sleep(50);
             frame.repaint();
         }
