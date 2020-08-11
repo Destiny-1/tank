@@ -6,20 +6,13 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.List;
 
 public class TankFrame extends Frame {
-
-    Tank tank = new Tank(200, 400, Dir.DOWN, Group.GOOD, this);
-
-    List<Bullet> bulletList = new ArrayList();
-    List<Tank> tanks = new ArrayList();
-    List<Explode> explodes = new ArrayList();
 
     public static int WIDTH = 1080;
     public static int HEIGHT = 960;
 
+    GameModel gameModel = GameModel.gm;
     public TankFrame() {
         this.setSize(WIDTH, HEIGHT);
         this.setResizable(true);
@@ -32,7 +25,6 @@ public class TankFrame extends Frame {
             public void windowOpened(WindowEvent e) {
                 System.out.println("windowOpened");
             }
-
             public void windowClosing(WindowEvent e) {
                 System.exit(0);
             }
@@ -41,29 +33,7 @@ public class TankFrame extends Frame {
 
     @Override
     public void paint(Graphics graphics) {
-        tank.paint(graphics);
-        Color color = graphics.getColor();
-        graphics.setColor(Color.red);
-        graphics.drawString("子弹数量:" + bulletList.size(), 20, 60);
-        graphics.drawString("敌人数量:" + tanks.size(), 20, 80);
-        graphics.drawString("爆炸数量:" + explodes.size(), 20, 100);
-        graphics.setColor(color);
-
-        for (int i = 0; i < bulletList.size(); i++) {
-            bulletList.get(i).paint(graphics);
-        }
-        for (int j = 0; j < tanks.size(); j++) {
-            tanks.get(j).paint(graphics);
-        }
-        for (int k = 0; k < explodes.size(); k++) {
-            explodes.get(k).paint(graphics);
-        }
-
-        for (int i = 0; i < bulletList.size(); i++) {
-            for (int j = 0; j < tanks.size(); j++) {
-                bulletList.get(i).collideWith(tanks.get(j));
-            }
-        }
+        gameModel.paint(graphics);
     }
 
     /**
@@ -105,28 +75,26 @@ public class TankFrame extends Frame {
                 case KeyEvent.VK_DOWN:
                     down = true;
                     break;
-                case KeyEvent.VK_SPACE:
-                    tank.fire();
             }
             setTankDir();
         }
 
         private void setTankDir() {
             if (!left && !right && !up && !down) {
-                tank.setMoving(false);
+                gameModel.myTank.setMoving(false);
             } else {
-                tank.setMoving(true);
+                gameModel.myTank.setMoving(true);
                 if (left) {
-                    tank.setDir(Dir.LEFT);
+                    gameModel.myTank.setDir(Dir.LEFT);
                 }
                 if (right) {
-                    tank.setDir(Dir.RIGHT);
+                    gameModel.myTank.setDir(Dir.RIGHT);
                 }
                 if (up) {
-                    tank.setDir(Dir.UP);
+                    gameModel.myTank.setDir(Dir.UP);
                 }
                 if (down) {
-                    tank.setDir(Dir.DOWN);
+                    gameModel.myTank.setDir(Dir.DOWN);
                 }
             }
         }
@@ -146,6 +114,8 @@ public class TankFrame extends Frame {
                 case KeyEvent.VK_DOWN:
                     down = false;
                     break;
+                case KeyEvent.VK_SPACE:
+                    gameModel.myTank.fire();
             }
             setTankDir();
         }

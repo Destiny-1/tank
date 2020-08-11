@@ -3,30 +3,38 @@ package com.zcyu.tank;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class Explode {
-    private int x, y;
-    private TankFrame tankFrame;
-
-    public static int WIDTH;
-    public static int HEIGHT;
+public class Explode extends GameObject {
 
     private int step = 0;
 
-    public Explode(int x, int y, TankFrame tankFrame) {
+    public static int width, height;
+
+    GameModel gm = GameModel.gm;
+    public Explode(int x, int y) {
         this.x = x;
         this.y = y;
-        this.tankFrame = tankFrame;
+        gm.add(this);
         new Thread(() -> new Audio("audio/explode.wav").play()).start();
     }
 
     public void paint(Graphics graphics) {
         BufferedImage bufferedImage = ResourceMgr.explode[step++];
-        WIDTH = bufferedImage.getWidth();
-        HEIGHT = bufferedImage.getHeight();
+        this.width = bufferedImage.getWidth();
+        this.height = bufferedImage.getHeight();
         graphics.drawImage(bufferedImage, this.x, this.y, null);
         if (step >= ResourceMgr.explode.length) {
-            tankFrame.explodes.remove(this);
+            gm.remove(this);
         }
+    }
+
+    @Override
+    public int getWidth() {
+        return width;
+    }
+
+    @Override
+    public int getHeight() {
+        return height;
     }
 
 

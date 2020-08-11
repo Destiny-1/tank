@@ -2,31 +2,30 @@ package com.zcyu.tank;
 
 import java.awt.*;
 
-public class Bullet {
-    private int x, y;
-    public static int WIDTH, HEIGHT;
+public class Bullet extends GameObject{
+    public static int width, height;
     private Dir dir;
     private static int SPEED = 10;
 
-    Rectangle rectangle = new Rectangle();
+    public Rectangle rectangle = new Rectangle();
 
     public Group group = Group.BAD;
 
-    private TankFrame tankFrame;
+    GameModel gm = GameModel.gm;
 
     private Boolean alive = true;
 
-    public Bullet(int x, int y, Dir dir, Group group, TankFrame tankFrame) {
+    public Bullet(int x, int y, Dir dir, Group group) {
         this.x = x;
         this.y = y;
         this.dir = dir;
-        this.tankFrame = tankFrame;
         this.group = group;
 
         rectangle.x = this.x;
         rectangle.y = this.y;
-        rectangle.width = WIDTH;
-        rectangle.height = HEIGHT;
+        rectangle.width = width;
+        rectangle.height = height;
+        gm.add(this);
     }
 
     private void move() {
@@ -57,7 +56,7 @@ public class Bullet {
     public void paint(Graphics graphics) {
         move();
         if (!alive) {
-            tankFrame.bulletList.remove(this);
+            gm.remove(this);
         } else {
             switch (dir) {
                 case UP:
@@ -76,18 +75,18 @@ public class Bullet {
         }
     }
 
-    public void collideWith(Tank tank) {
-        if (this.group == tank.group) return;
-        if (rectangle.intersects(tank.rectangle)) {
-            this.die();
-            tank.die();
-            int bX = tank.x + tank.WIDTH / 2 - Explode.WIDTH / 2;
-            int bY = tank.y + tank.HEIGHT / 2 - Explode.HEIGHT / 2;
-            tankFrame.explodes.add(new Explode(bX, bY, tankFrame));
-        }
+    @Override
+    public int getWidth() {
+        return width;
     }
 
-    private void die() {
+    @Override
+    public int getHeight() {
+        return height;
+    }
+
+
+    public void die() {
         this.alive = false;
     }
 }

@@ -1,33 +1,44 @@
 package com.zcyu.tank;
 
+import com.zcyu.strategy.DefaultFireStrategy;
+import com.zcyu.strategy.FireStrategy;
+import com.zcyu.strategy.FourDirsFireStrategy;
+
 import java.awt.*;
 import java.util.Random;
 
-public class Tank {
-    public int x, y;
-    public int WIDTH = ResourceMgr.goodTankD.getWidth();
-    public int HEIGHT = ResourceMgr.goodTankD.getHeight();
+public class Tank extends GameObject {
+    public static int WIDTH = ResourceMgr.goodTankD.getWidth();
+    public static int HEIGHT = ResourceMgr.goodTankD.getHeight();
     public Rectangle rectangle = new Rectangle();
-    private Dir dir = Dir.UP;
+    public Dir dir;
     private int speed = 5;
     private Boolean moving = true;
-    public Group group = Group.BAD;
+    public Group group;
     private Random random = new Random();
     private Boolean alive = true;
+    public FireStrategy fireStrategy;
 
-    private TankFrame tankFrame = null;
-
-    public Tank(int x, int y, Dir dir, Group group, TankFrame tankFrame) {
+    int oldX, oldY;
+    GameModel gm = GameModel.gm;
+    public Tank(int x, int y, Dir dir, Group group) {
+        super();
         this.x = x;
         this.y = y;
         this.dir = dir;
-        this.tankFrame = tankFrame;
         this.group = group;
 
         rectangle.x = this.x;
         rectangle.y = this.y;
         rectangle.width = WIDTH;
         rectangle.height = HEIGHT;
+
+        if (group == Group.BAD) {
+            fireStrategy = DefaultFireStrategy.defaultFireStrategy;
+        } else {
+            fireStrategy = FourDirsFireStrategy.fourDirsFireStrategy;
+        }
+        gm.add(this);
     }
 
     public void setMoving(Boolean moving) {
@@ -39,7 +50,7 @@ public class Tank {
     }
 
     public void paint(Graphics graphics) {
-        if (!alive) tankFrame.tanks.remove(this);
+        if (!alive) gm.remove(this);
         switch (dir) {
             case UP:
                 graphics.drawImage(this.group == Group.GOOD ? ResourceMgr.goodTankU : ResourceMgr.badTankU, x, y, null);
@@ -57,34 +68,46 @@ public class Tank {
         move();
     }
 
+    @Override
+    public int getWidth() {
+        return WIDTH;
+    }
+
+    @Override
+    public int getHeight() {
+        return HEIGHT;
+    }
+
     private void move() {
+        oldX = x;
+        oldY = y;
         if (!moving) return;
         switch (dir) {
             case UP:
                 y -= speed;
-                Bullet.WIDTH = ResourceMgr.bulletU.getWidth();
-                Bullet.HEIGHT = ResourceMgr.bulletU.getHeight();
+                Bullet.width = ResourceMgr.bulletU.getWidth();
+                Bullet.height = ResourceMgr.bulletU.getHeight();
                 WIDTH = ResourceMgr.goodTankU.getWidth();
                 HEIGHT = ResourceMgr.goodTankU.getHeight();
                 break;
             case DOWN:
                 y += speed;
-                Bullet.WIDTH = ResourceMgr.bulletD.getWidth();
-                Bullet.HEIGHT = ResourceMgr.bulletD.getHeight();
+                Bullet.width = ResourceMgr.bulletD.getWidth();
+                Bullet.height = ResourceMgr.bulletD.getHeight();
                 WIDTH = ResourceMgr.goodTankD.getWidth();
                 HEIGHT = ResourceMgr.goodTankD.getHeight();
                 break;
             case LEFT:
                 x -= speed;
-                Bullet.WIDTH = ResourceMgr.bulletL.getWidth();
-                Bullet.HEIGHT = ResourceMgr.bulletL.getHeight();
+                Bullet.width = ResourceMgr.bulletL.getWidth();
+                Bullet.height = ResourceMgr.bulletL.getHeight();
                 WIDTH = ResourceMgr.goodTankL.getWidth();
                 HEIGHT = ResourceMgr.goodTankL.getHeight();
                 break;
             case RIGHT:
                 x += speed;
-                Bullet.WIDTH = ResourceMgr.bulletR.getWidth();
-                Bullet.HEIGHT = ResourceMgr.bulletR.getHeight();
+                Bullet.width = ResourceMgr.bulletR.getWidth();
+                Bullet.height = ResourceMgr.bulletR.getHeight();
                 WIDTH = ResourceMgr.goodTankR.getWidth();
                 HEIGHT = ResourceMgr.goodTankR.getHeight();
                 break;
@@ -104,8 +127,8 @@ public class Tank {
     private void boundsCheck() {
         if (this.x < 0) x = 6;
         if (this.y < 30) y = 30;
-        if (this.x > tankFrame.WIDTH - this.WIDTH) x = tankFrame.WIDTH - this.WIDTH;
-        if (this.y > tankFrame.HEIGHT - this.HEIGHT) y = tankFrame.HEIGHT - this.HEIGHT;
+        if (this.x > TankFrame.WIDTH - WIDTH) x = TankFrame.WIDTH - WIDTH;
+        if (this.y > TankFrame.HEIGHT - HEIGHT) y = TankFrame.HEIGHT - HEIGHT;
     }
 
     private void randomDir() {
@@ -113,13 +136,15 @@ public class Tank {
     }
 
     public void fire() {
-        int bX = this.x + this.WIDTH / 2 - Bullet.WIDTH / 2;
-        int bY = this.y + this.HEIGHT / 2 - Bullet.HEIGHT / 2;
-        Bullet bullet = new Bullet(bX, bY, this.dir, this.group, this.tankFrame);
-        tankFrame.bulletList.add(bullet);
+        fireStrategy.fire(this);
     }
 
     public void die() {
         this.alive = false;
+    }
+
+    public void back(){
+        this.x = oldX;
+        this.y = oldY;
     }
 }
